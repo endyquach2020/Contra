@@ -82,6 +82,10 @@ export const ContraGame: React.FC<ContraGameProps> = ({
       }
       keysRef.current[e.code] = true;
       keysRef.current[e.key] = true;
+      if (e.key) {
+        keysRef.current[e.key.toLowerCase()] = true;
+        keysRef.current[e.key.toUpperCase()] = true;
+      }
 
       // Pause toggle
       if (e.code === 'KeyP' || e.code === 'Escape') {
@@ -96,6 +100,10 @@ export const ContraGame: React.FC<ContraGameProps> = ({
     const handleKeyUp = (e: KeyboardEvent) => {
       keysRef.current[e.code] = false;
       keysRef.current[e.key] = false;
+      if (e.key) {
+        keysRef.current[e.key.toLowerCase()] = false;
+        keysRef.current[e.key.toUpperCase()] = false;
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);

@@ -448,6 +448,10 @@ class ContraGameApp {
     window.addEventListener('keydown', (e) => {
       this.keys[e.code] = true;
       this.keys[e.key] = true;
+      if (e.key) {
+        this.keys[e.key.toLowerCase()] = true;
+        this.keys[e.key.toUpperCase()] = true;
+      }
 
       // Xử lý phím khi đang hiển thị Modal Quiz: Bấm A, B, C, D hoặc 1, 2, 3, 4
       if (this.gameState === 'quiz' && this.activeQuizContext) {
@@ -480,8 +484,10 @@ class ContraGameApp {
         this.updateHUD();
       }
 
-      // Bắn phím J hoặc Z
-      if ((e.code === 'KeyJ' || e.code === 'KeyZ') && this.gameState === 'playing') {
+      // Bắn phím X, J hoặc Z
+      const isShoot = e.code === 'KeyX' || e.code === 'KeyJ' || e.code === 'KeyZ' ||
+                      e.key === 'x' || e.key === 'X' || e.key === 'j' || e.key === 'J' || e.key === 'z' || e.key === 'Z';
+      if (isShoot && this.gameState === 'playing') {
         this.firePlayerWeapon();
       }
     });
@@ -489,6 +495,10 @@ class ContraGameApp {
     window.addEventListener('keyup', (e) => {
       this.keys[e.code] = false;
       this.keys[e.key] = false;
+      if (e.key) {
+        this.keys[e.key.toLowerCase()] = false;
+        this.keys[e.key.toUpperCase()] = false;
+      }
     });
 
     // Touch Controls
@@ -591,11 +601,11 @@ class ContraGameApp {
       sounds.playJump();
     }
 
-    // Continuous Fire for Machine Gun
-    if (p.weapon === 'MACHINE' && (this.keys['Space'] || this.keys['KeyJ'] || this.keys['KeyZ'])) {
-      if (p.shootCooldown <= 0) {
-        this.firePlayerWeapon();
-      }
+    // Giữ phím bắn liên tục (Continuous Fire) theo nhịp cooldown của từng loại súng
+    const isHoldingShoot = this.keys['KeyX'] || this.keys['KeyJ'] || this.keys['KeyZ'] ||
+                           this.keys['x'] || this.keys['X'] || this.keys['j'] || this.keys['J'] || this.keys['z'] || this.keys['Z'];
+    if (isHoldingShoot && p.shootCooldown <= 0) {
+      this.firePlayerWeapon();
     }
 
     // Gravity

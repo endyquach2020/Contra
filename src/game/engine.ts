@@ -260,7 +260,7 @@ export class GameEngine {
     const left = keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['A'];
     const right = keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['D'];
     const jump = keys['Space'] || keys[' '] || keys['KeyW'] || keys['w'] || keys['W'] || keys['ArrowUp'] || keys['KeyK'] || keys['k'];
-    const shoot = keys['KeyX'] || keys['x'] || keys['X'] || keys['KeyB'] || keys['b'] || keys['B'] || keys['KeyJ'] || keys['j'];
+    const shoot = keys['KeyX'] || keys['x'] || keys['X'] || keys['KeyJ'] || keys['j'] || keys['J'] || keys['KeyZ'] || keys['z'] || keys['Z'] || keys['KeyB'] || keys['b'] || keys['B'];
 
     const baseSpeed = this.isGiant ? 3.4 : 2.8;
 
