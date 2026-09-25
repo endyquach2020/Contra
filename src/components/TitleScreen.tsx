@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Lesson } from '../types';
-import { Sparkles, Play, PlusCircle, Settings, Award, CheckCircle2, Gamepad2, Search, Compass, Zap, Flame, Target } from 'lucide-react';
+import { Sparkles, Play, PlusCircle, Settings, Award, CheckCircle2, Gamepad2, Search, Compass, Zap, Flame, Target, Rocket } from 'lucide-react';
 import { TOPIC_CATEGORIES } from '../quiz/defaultQuestions';
 import { sounds } from '../game/sound';
+import { DeployModal } from './DeployModal';
 
 interface TitleScreenProps {
   lessons: Lesson[];
@@ -21,6 +22,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
 }) => {
   const [selectedTopic, setSelectedTopic] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showDeployModal, setShowDeployModal] = useState<boolean>(false);
 
   // Extract distinct topics from current lessons
   const availableTopics = Array.from(new Set(lessons.map(l => l.topic || l.subject || 'Khác')));
@@ -100,8 +102,16 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
           </div>
         </div>
 
-        {/* Action Button: CRUD Question Manager */}
-        <div className="flex items-center gap-3">
+        {/* Action Button: CRUD Question Manager & GitHub Deploy */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <button
+            onClick={() => setShowDeployModal(true)}
+            className="flex items-center gap-2 px-3.5 py-2 bg-linear-to-r from-[#10b981]/20 to-[#00f0ff]/20 hover:from-[#10b981]/30 hover:to-[#00f0ff]/30 border border-[#34d399]/60 hover:border-[#34d399] rounded-xl text-xs sm:text-sm font-black text-[#34d399] transition-all shadow-[0_0_15px_rgba(52,211,153,0.25)] cursor-pointer hover:scale-[1.02] active:scale-95"
+          >
+            <Rocket className="w-4 h-4 text-[#34d399]" />
+            <span>DEPLOY GITHUB (HTML/CSS/JS)</span>
+          </button>
+
           <button
             onClick={onOpenQuestionManager}
             className="flex items-center gap-2 px-4 py-2 bg-[#092c3a] hover:bg-[#0c394b] border border-[#00f0ff]/40 hover:border-[#00f0ff] rounded-xl text-xs sm:text-sm font-black text-[#00f0ff] transition-all shadow-[0_0_15px_rgba(0,240,255,0.15)] cursor-pointer hover:scale-[1.02] active:scale-95"
@@ -326,6 +336,12 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
         </div>
 
       </div>
+
+      {/* GitHub Deploy Instructions & Code Modal */}
+      <DeployModal
+        isOpen={showDeployModal}
+        onClose={() => setShowDeployModal(false)}
+      />
 
     </div>
   );

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Arena Edu Connect - Contra Chiến Trường Tri Thức</title>
+  <meta name="description" content="Nền tảng game hóa giáo dục Contra vượt ải mở cổng laser bằng cách trả lời câu hỏi trắc nghiệm A B C D, ăn nấm khổng lồ, nhặt đạn và vượt chướng ngại vật.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- CRT Scanline Filter -->
+  <div class="scanlines"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo-badge">
+      <div class="logo-icon">🎮</div>
+      <div class="logo-text">
+        <h1>CONTRA EDU ARENA</h1>
+        <p>Chiến Trường Tri Thức & Súng Đạn Retro</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btnToggleSound" class="btn btn-secondary btn-sm">🔊 Bật âm</button>
+      <button id="btnOpenQuestionManager" class="btn btn-primary btn-sm">📚 Quản lý câu hỏi</button>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: TITLE SCREEN & MISSION SELECT -->
+  <main id="screenTitle" class="screen">
+    <div class="title-banner">
+      <span class="title-badge">⚡ PHIÊN BẢN RETRO GAMING 8-BIT</span>
+      <h2 class="title-logo-large">CONTRA TRI THỨC</h2>
+      <p class="title-subtitle">Tiêu diệt kẻ địch • Ăn nấm khổng lồ • Trả lời trắc nghiệm mở cổng Laser</p>
+    </div>
+
+    <!-- Feature Highlights -->
+    <div class="features-strip">
+      <div class="feature-pill">⌨️ Bấm phím <b>A, B, C, D</b> để giải đố</div>
+      <div class="feature-pill">🍄 Ăn <b>Siêu Nấm</b> biến hình Khổng Lồ</div>
+      <div class="feature-pill">🔫 Nhặt súng <b>Spread Gun & Laser</b></div>
+      <div class="feature-pill">💥 Thùng thuốc nổ, chông gai & cưa xoay</div>
+    </div>
+
+    <!-- Topic Selector -->
+    <div class="topic-selector">
+      <h3>🎯 Chọn Nhiệm Vụ & Chủ Đề Kiến Thức</h3>
+      <div id="topicGrid" class="topic-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-top: 10px;">
+      <button id="btnStartMission" class="btn btn-primary" style="padding: 14px 32px; font-size: 1.1rem;">
+        🚀 XUẤT KÍCH CHIẾN ĐẤU
+      </button>
+    </div>
+  </main>
+
+  <!-- SCREEN 2: GAMEPLAY SCREEN -->
+  <main id="screenGame" class="screen hidden">
+    <!-- Viewport Container -->
+    <div class="game-viewport">
+      <!-- Arcade Top HUD -->
+      <div class="hud-bar">
+        <div class="hud-group">
+          <div class="hud-item"><span id="hudHearts" class="hud-hearts">❤️❤️❤️❤️❤️</span></div>
+          <div class="hud-item hud-badge" id="hudGate">Cổng: 0/4</div>
+          <div class="hud-item hud-badge" id="hudMedals">🏅 0</div>
+        </div>
+        <div class="hud-group">
+          <div id="hudMushroom" class="hud-item hud-mushroom-active hidden">🍄 SIÊU NẤM: 15s</div>
+          <div class="hud-item hud-weapon" id="hudWeapon">Vũ khí: RIFLE</div>
+          <button id="btnBackToHub" class="btn btn-secondary btn-sm">🏠 Về Hub</button>
+        </div>
+      </div>
+
+      <!-- Game Canvas -->
+      <div class="arcade-frame">
+        <canvas id="gameCanvas" width="800" height="480"></canvas>
+      </div>
+
+      <!-- Floating In-game Toast -->
+      <div id="gameToast" class="hud-badge hidden" style="position: absolute; bottom: 80px; background: rgba(5,46,22,0.9); border-color: #34d399; font-size: 0.95rem; font-weight: 700; padding: 8px 16px;"></div>
+
+      <!-- Keyboard Guide -->
+      <div class="controls-guide-bar">
+        <span>🎮 Di chuyển: <span class="key-tag">A / D</span> hoặc <span class="key-tag">← / →</span></span>
+        <span>Nhảy: <span class="key-tag">W</span> / <span class="key-tag">Space</span></span>
+        <span>Ngồi: <span class="key-tag">S</span> / <span class="key-tag">↓</span></span>
+        <span>Bắn: <span class="key-tag">J</span> hoặc <span class="key-tag">Z</span></span>
+        <span>Chọn đáp án: <span class="key-tag">A</span> <span class="key-tag">B</span> <span class="key-tag">C</span> <span class="key-tag">D</span></span>
+      </div>
+
+      <!-- Mobile Touch Controls -->
+      <div class="touch-controls">
+        <div class="touch-dpad">
+          <div></div>
+          <button id="btnTouchUp" class="touch-btn">▲</button>
+          <div></div>
+          <button id="btnTouchLeft" class="touch-btn">◀</button>
+          <div></div>
+          <button id="btnTouchRight" class="touch-btn">▶</button>
+          <div></div>
+          <button id="btnTouchDown" class="touch-btn">▼</button>
+          <div></div>
+        </div>
+        <div class="touch-action-buttons">
+          <button id="btnTouchJump" class="touch-action-btn touch-btn-jump">
+            <span>NHẢY</span>
+            <small style="font-size: 0.65rem;">JUMP</small>
+          </button>
+          <button id="btnTouchFire" class="touch-action-btn touch-btn-fire">
+            <span>BẮN</span>
+            <small style="font-size: 0.65rem;">FIRE</small>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: QUIZ MODAL (BẤM PHÍM A, B, C, D) -->
+  <div id="modalQuiz" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="quizGateTitle" class="modal-title">🔐 CỔNG LASER AN NINH</h3>
+      </div>
+      <div style="margin-bottom: 12px; color: #a7f3d0; font-size: 0.85rem;">
+        ⚡ Trả lời đúng để vô hiệu hóa chùm Laser và nhận Huy chương chiến công:
+      </div>
+      <div id="quizQuestionText" style="font-size: 1.15rem; font-weight: 700; color: #ffffff; line-height: 1.4; margin-bottom: 16px;">
+        <!-- Injected Question -->
+      </div>
+      <div id="quizOptionsContainer" class="quiz-options">
+        <!-- Buttons A, B, C, D -->
+      </div>
+      <div id="quizFeedback" class="hidden" style="margin-top: 14px; padding: 12px; border-radius: 8px; background: rgba(5,46,22,0.8); border: 1px solid #10b981;">
+        <!-- Feedback content -->
+      </div>
+      <div style="margin-top: 14px; text-align: center; font-size: 0.75rem; color: #94a3b8;">
+        💡 <i>Bạn có thể bấm phím chữ cái <b>A, B, C, D</b> trên bàn phím để chọn nhanh!</i>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: QUESTION MANAGER (CRUD) -->
+  <div id="modalQuestionManager" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📚 Ngân Hàng Câu Hỏi Trắc Nghiệm</h3>
+        <button id="btnCloseQuestionManager" class="btn-close">&times;</button>
+      </div>
+      <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 12px;">
+        Danh sách câu hỏi hiện tại cho chủ đề đang chọn. Dữ liệu được lưu trữ tự động trong trình duyệt:
+      </div>
+      <div id="managerQuestionList" style="max-height: 320px; overflow-y: auto; margin-bottom: 16px;">
+        <!-- Injected list -->
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('modalQuestionManager').classList.add('hidden')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VICTORY -->
+  <div id="modalVictory" class="modal-overlay hidden">
+    <div class="modal-box" style="text-align: center;">
+      <h2 style="font-size: 2rem; color: #34d399; font-weight: 800; margin-bottom: 8px;">🏆 NHIỆM VỤ HOÀN THÀNH!</h2>
+      <p style="color: #a7f3d0; margin-bottom: 20px;">Bạn đã giải mã toàn bộ Cổng Laser Tri Thức và phá đảo chiến trường!</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
+        <div style="background: rgba(5,46,22,0.7); padding: 12px; border-radius: 8px; border: 1px solid #10b981;">
+          <div style="font-size: 0.75rem; color: #9ca3af;">ĐIỂM SỐ</div>
+          <div id="victoryScore" style="font-size: 1.4rem; font-weight: 700; color: #fbbf24;">0</div>
+        </div>
+        <div style="background: rgba(5,46,22,0.7); padding: 12px; border-radius: 8px; border: 1px solid #10b981;">
+          <div style="font-size: 0.75rem; color: #9ca3af;">HUY CHƯƠNG</div>
+          <div id="victoryMedals" style="font-size: 1.4rem; font-weight: 700; color: #34d399;">0</div>
+        </div>
+        <div style="background: rgba(5,46,22,0.7); padding: 12px; border-radius: 8px; border: 1px solid #10b981;">
+          <div style="font-size: 0.75rem; color: #9ca3af;">TIÊU DIỆT</div>
+          <div id="victoryEnemies" style="font-size: 1.4rem; font-weight: 700; color: #ef4444;">0</div>
+        </div>
+      </div>
+      <button id="btnVictoryRestart" class="btn btn-primary" style="padding: 12px 28px;">🎮 Chơi Lại Màn Mới</button>
+    </div>
+  </div>
+
+  <!-- MODAL: GAME OVER -->
+  <div id="modalGameOver" class="modal-overlay hidden">
+    <div class="modal-box" style="text-align: center;">
+      <h2 style="font-size: 2rem; color: #ef4444; font-weight: 800; margin-bottom: 8px;">💀 HY SINH TRÊN CHIẾN TRƯỜNG</h2>
+      <p style="color: #fca5a5; margin-bottom: 16px;">Bạn đã hết số tim! Hãy cẩn thận né tránh chướng ngại vật và ăn Nấm để hồi máu.</p>
+      <div style="margin-bottom: 20px; font-size: 1.1rem; color: #fbbf24;">
+        Điểm đạt được: <span id="gameOverScore" style="font-weight: 700;">0</span>
+      </div>
+      <button id="btnRestartGame" class="btn btn-primary" style="padding: 12px 28px;">🔄 Tái Xuất Chiến Đấu</button>
+    </div>
+  </div>
+
+  <!-- Game Engine Script -->
+  <script src="game.js"></script>
+</body>
+</html>
